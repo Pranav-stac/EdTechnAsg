@@ -20,12 +20,7 @@ const comparisonRows = [
 ];
 
 export default async function HomePage() {
-  const [courses, categories, testimonials, partners] = await Promise.all([
-    api<{ items: any[] }>("/api/v1/courses?pageSize=6"),
-    api<{ items: any[] }>("/api/v1/categories"),
-    api<{ items: any[] }>("/api/v1/testimonials"),
-    api<{ items: any[] }>("/api/v1/partners"),
-  ]);
+  const [courses, categories, testimonials, partners] = await loadHomepageData();
 
   return (
     <PublicShell>
@@ -193,4 +188,19 @@ export default async function HomePage() {
       </section>
     </PublicShell>
   );
+}
+
+async function loadHomepageData() {
+  const empty = { items: [] as any[] };
+
+  try {
+    return await Promise.all([
+      api<{ items: any[] }>("/api/v1/courses?pageSize=6"),
+      api<{ items: any[] }>("/api/v1/categories"),
+      api<{ items: any[] }>("/api/v1/testimonials"),
+      api<{ items: any[] }>("/api/v1/partners"),
+    ]);
+  } catch {
+    return [empty, empty, empty, empty];
+  }
 }

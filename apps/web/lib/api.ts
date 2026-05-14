@@ -1,17 +1,37 @@
+const PRODUCTION_API_URL = "https://api.manzil.praanav.in";
+
 function getApiUrl(): string {
-  if (typeof window === "undefined") {
-    return (
-      process.env.API_URL?.trim() ||
-      process.env.NEXT_PUBLIC_API_URL?.trim() ||
-      "http://localhost:4000"
-    );
+  const fromEnv = process.env.API_URL?.trim() || process.env.NEXT_PUBLIC_API_URL?.trim();
+  if (fromEnv) return fromEnv;
+
+  if (process.env.NODE_ENV === "production") {
+    return PRODUCTION_API_URL;
   }
 
-  return process.env.NEXT_PUBLIC_API_URL?.trim() || "http://localhost:4000";
+  return "http://localhost:4000";
+}
+
+function getClientApiUrl(): string {
+  const fromEnv = process.env.NEXT_PUBLIC_API_URL?.trim();
+  if (fromEnv) return fromEnv;
+
+  if (process.env.NODE_ENV === "production") {
+    return PRODUCTION_API_URL;
+  }
+
+  return "http://localhost:4000";
+}
+
+function resolveApiUrl(): string {
+  if (typeof window === "undefined") {
+    return getApiUrl();
+  }
+
+  return getClientApiUrl();
 }
 
 export async function api<T>(path: string, init?: RequestInit): Promise<T> {
-  const apiUrl = getApiUrl();
+  const apiUrl = resolveApiUrl();
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
     ...(init?.headers as Record<string, string> | undefined),
@@ -48,4 +68,4 @@ export async function api<T>(path: string, init?: RequestInit): Promise<T> {
   return data as T;
 }
 
-export const API_URL = getApiUrl();
+export const API_URL = resolveApiUrl();

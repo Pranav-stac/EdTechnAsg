@@ -7,8 +7,12 @@ applications:
           commands:
             - npm ci
             - npm run build -w @manzilchaser/shared
+            - export API_URL=https://api.manzil.praanav.in
+            - export NEXT_PUBLIC_API_URL=https://api.manzil.praanav.in
         build:
           commands:
+            - export API_URL=https://api.manzil.praanav.in
+            - export NEXT_PUBLIC_API_URL=https://api.manzil.praanav.in
             - npm run build -w @manzilchaser/web
       artifacts:
         baseDirectory: .next
