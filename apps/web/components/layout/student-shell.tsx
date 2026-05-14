@@ -33,9 +33,9 @@ export function StudentShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen bg-surface-muted">
-      <motionStudentShellHeader logout={logout} />
+      <StudentShellHeader logout={logout} />
       <div className="container-page grid gap-8 py-8 lg:grid-cols-[240px_1fr]">
-        <aside className="card h-fit p-4">
+        <aside className="surface-panel h-fit p-4">
           <nav className="space-y-1">
             {links.map(([label, href]) => (
               <Link
@@ -51,6 +51,22 @@ export function StudentShell({ children }: { children: React.ReactNode }) {
           </nav>
         </aside>
         <section>{children}</section>
+      </div>
+    </div>
+  );
+}
+
+function StudentShellHeader({ logout }: { logout: () => void }) {
+  return (
+    <div className="border-b border-surface-line bg-white">
+      <div className="container-page flex items-center justify-between py-4">
+        <Link href="/" className="flex items-center gap-2 font-bold text-brand">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand text-sm text-white">MC</span>
+          MANZILCHASER
+        </Link>
+        <button onClick={logout} className="btn-secondary">
+          Logout
+        </button>
       </div>
     </div>
   );
