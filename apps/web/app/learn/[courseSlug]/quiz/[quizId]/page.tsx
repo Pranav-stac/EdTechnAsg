@@ -119,11 +119,3 @@ export default function QuizPage({
     </div>
   );
 }
-
-function QuizPageLoading() {
-  return <motionQuizPage>Loading quiz...</motionQuizPage>;
-}
-
-const motionQuizPage = ({ children }: { children: React.ReactNode }) => (
-  <div className="container-page py-20">{children}</div>
-);

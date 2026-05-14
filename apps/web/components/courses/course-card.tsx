@@ -16,7 +16,7 @@ export function CourseCard({ course }: { course: Course }) {
   return (
     <article className="card p-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <motionCourseCardHeader course={course} />
+        <CourseCardHeader course={course} />
         <p className="text-lg font-bold text-brand">{formatCurrency(course.fee)}</p>
       </div>
       <div className="mt-4 flex flex-wrap gap-2">

@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { UserRole } from "@prisma/client";
-import { AppError } from "./errors";
-import { verifyToken } from "./jwt";
+import { AppError } from "../lib/errors";
+import { verifyToken } from "../lib/jwt";
 
 export type AuthedRequest = Request & {
   user?: { id: string; role: UserRole; name: string };

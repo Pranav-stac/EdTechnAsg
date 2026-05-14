@@ -107,7 +107,7 @@ export default async function HomePage() {
             View all
           </Link>
         </div>
-        <motionPopularCourses courses={courses.items} />
+        <PopularCourses courses={courses.items} />
       </section>
 
       <section className="bg-white py-16">

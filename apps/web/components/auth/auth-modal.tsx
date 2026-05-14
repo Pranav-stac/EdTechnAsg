@@ -130,7 +130,7 @@ export function AuthModal({ open, onClose }: Props) {
             </button>
           </form>
         ) : (
-          <motionOtpForm
+          <OtpForm
             otp={otp}
             onOtpChange={onOtpChange}
             onOtpPaste={onOtpPaste}
