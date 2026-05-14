@@ -32,17 +32,8 @@ export function StudentShell({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <div className="border-b border-slate-200 bg-white">
-        <div className="container-page flex items-center justify-between py-4">
-          <Link href="/" className="font-bold text-brand">
-            MANZILCHASER
-          </Link>
-          <button onClick={logout} className="text-sm text-slate-600">
-            Logout
-          </button>
-        </div>
-      </div>
+    <div className="min-h-screen bg-surface-muted">
+      <motionStudentShellHeader logout={logout} />
       <div className="container-page grid gap-8 py-8 lg:grid-cols-[240px_1fr]">
         <aside className="card h-fit p-4">
           <nav className="space-y-1">

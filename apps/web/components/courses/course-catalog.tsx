@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Star } from "lucide-react";
 import { CourseCard } from "@/components/courses/course-card";
 
 type Course = {

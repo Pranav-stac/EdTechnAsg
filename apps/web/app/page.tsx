@@ -1,4 +1,4 @@
-import Image from "next/image";
+﻿import Image from "next/image";
 import Link from "next/link";
 import { TRUST_METRICS } from "@manzilchaser/shared";
 import { PublicShell } from "@/components/layout/public-shell";
@@ -14,9 +14,9 @@ const whyChooseUs = [
 ];
 
 const comparisonRows = [
-  { university: "Amity University", fee: "₹1,80,000", duration: "2 Years", mode: "Online", accreditation: "UGC Approved" },
-  { university: "Manipal University", fee: "₹2,10,000", duration: "2 Years", mode: "Online", accreditation: "UGC Approved" },
-  { university: "LPU", fee: "₹1,95,000", duration: "2 Years", mode: "Hybrid", accreditation: "UGC Approved" },
+  { university: "Amity University", fee: "â‚¹1,80,000", duration: "2 Years", mode: "Online", accreditation: "UGC Approved" },
+  { university: "Manipal University", fee: "â‚¹2,10,000", duration: "2 Years", mode: "Online", accreditation: "UGC Approved" },
+  { university: "LPU", fee: "â‚¹1,95,000", duration: "2 Years", mode: "Hybrid", accreditation: "UGC Approved" },
 ];
 
 export default async function HomePage() {
@@ -62,7 +62,7 @@ export default async function HomePage() {
               />
             </div>
             <div className="absolute -left-4 top-8 rounded-2xl bg-white px-4 py-3 text-sm font-semibold text-brand shadow-float">Live Classes</div>
-            <motionHomeHeroActions />
+            <div className="absolute -right-2 bottom-10 rounded-2xl bg-white px-4 py-3 text-sm font-semibold text-brand shadow-float">Top Universities</div>
             <div className="absolute bottom-4 left-8 rounded-2xl bg-accent-green px-4 py-3 text-sm font-semibold text-white shadow-float">4.8/5 Rating</div>
           </div>
         </div>
@@ -71,7 +71,10 @@ export default async function HomePage() {
       <section className="border-b border-surface-line bg-white">
         <div className="container-page grid gap-4 py-6 sm:grid-cols-2 lg:grid-cols-4">
           {TRUST_METRICS.map((metric) => (
-            <motionHomeTrustMetric key={metric.label} metric={metric} />
+            <div key={metric.label} className="rounded-2xl bg-surface-muted p-4 text-center">
+              <p className="text-2xl font-bold text-brand">{metric.value}</p>
+              <p className="mt-1 text-sm text-slate-600">{metric.label}</p>
+            </div>
           ))}
         </div>
       </section>
@@ -183,7 +186,7 @@ export default async function HomePage() {
                   <p className="text-sm text-slate-500">{item.role}</p>
                 </div>
               </div>
-              <p className="mt-5 text-slate-700">“{item.quote}”</p>
+              <p className="mt-5 text-slate-700">â€œ{item.quote}â€</p>
             </blockquote>
           ))}
         </div>
@@ -191,23 +194,3 @@ export default async function HomePage() {
     </PublicShell>
   );
 }
-
-function HomeHeroActions() {
-  return (
-    <div className="absolute -right-2 bottom-10 rounded-2xl bg-white px-4 py-3 text-sm font-semibold text-brand shadow-float">
-      Top Universities
-    </div>
-  );
-}
-
-function HomeTrustMetric({ metric }: { metric: { label: string; value: string } }) {
-  return (
-    <div className="rounded-2xl bg-surface-muted p-4 text-center">
-      <p className="text-2xl font-bold text-brand">{metric.value}</p>
-      <p className="mt-1 text-sm text-slate-600">{metric.label}</p>
-    </div>
-  );
-}
-
-const motionHomeHeroActions = HomeHeroActions;
-const motionHomeTrustMetric = HomeTrustMetric;

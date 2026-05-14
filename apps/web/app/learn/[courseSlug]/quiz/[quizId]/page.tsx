@@ -47,17 +47,27 @@ export default function QuizPage({
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <div className="container-page grid gap-8 py-8 lg:grid-cols-[1fr_240px]">
-        <section className="card p-6">
+    <div className="min-h-screen bg-surface-muted">
+      <div className="border-b border-surface-line bg-white">
+        <div className="container-page py-4">
+          <p className="text-sm text-slate-500">Assessment</p>
+          <h1 className="mt-1 text-2xl font-bold text-slate-900">{quiz.title}</h1>
+        </div>
+      </div>
+      <div className="container-page grid gap-8 py-8 lg:grid-cols-[1fr_260px]">
+        <section className="surface-panel">
           <p className="text-sm text-slate-500">
             Question {index + 1} of {quiz.questions.length}
           </p>
-          <h1 className="mt-2 text-2xl font-bold">{quiz.title}</h1>
-          <p className="mt-6 text-lg font-medium">{question.prompt}</p>
+          <h2 className="mt-2 text-xl font-semibold text-slate-900">{question.prompt}</h2>
           <div className="mt-6 space-y-3">
             {question.options.map((option: string) => (
-              <label key={option} className="flex items-center gap-3 rounded-xl border border-slate-200 p-4">
+              <label
+                key={option}
+                className={`flex items-center gap-3 rounded-2xl border p-4 transition ${
+                  answers[question.id] === option ? "border-brand bg-brand-light" : "border-surface-line"
+                }`}
+              >
                 <input
                   type="radio"
                   name={question.id}
@@ -95,8 +105,12 @@ export default function QuizPage({
             Back to lesson
           </Link>
         </section>
-        <aside className="card p-4">
-          <h2 className="font-semibold">Question Palette</h2>
+        <aside className="surface-panel h-fit lg:sticky lg:top-24">
+          <h2 className="font-semibold text-slate-900">Question Palette</h2>
+          <div className="mt-4 flex flex-wrap gap-2 text-xs text-slate-500">
+            <span className="inline-flex items-center gap-2"><span className="h-3 w-3 rounded bg-green-100" /> Answered</span>
+            <span className="inline-flex items-center gap-2"><span className="h-3 w-3 rounded bg-yellow-100" /> Marked</span>
+          </div>
           <div className="mt-4 grid grid-cols-4 gap-2">
             {quiz.questions.map((item: any, questionIndex: number) => {
               const answered = Boolean(answers[item.id]);

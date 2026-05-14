@@ -73,11 +73,13 @@ export default function LearnPage({ params }: { params: Promise<{ courseSlug: st
   const quiz = course.modules[0]?.quizzes?.[0];
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <LearnPageHeader courseTitle={course.title} />
+    <div className="min-h-screen bg-surface-muted">
+      <div className="border-b border-surface-line bg-white">
+        <LearnPageHeader courseTitle={course.title} />
+      </div>
       <div className="container-page grid gap-8 py-8 lg:grid-cols-[280px_1fr]">
-        <aside className="card p-4">
-          <h2 className="font-semibold">Course Content</h2>
+        <aside className="surface-panel h-fit p-4">
+          <h2 className="font-semibold text-slate-900">Course Content</h2>
           <div className="mt-4 space-y-4">
             {course.modules.map((module: any) => (
               <div key={module.id}>
@@ -99,15 +101,17 @@ export default function LearnPage({ params }: { params: Promise<{ courseSlug: st
           </div>
         </aside>
         <section className="space-y-6">
-          <div className="card overflow-hidden">
+          <div className="overflow-hidden rounded-3xl border border-surface-line bg-black shadow-panel">
             <video controls className="aspect-video w-full bg-black" src={activeLesson.videoUrl} />
           </div>
-          <div className="card p-6">
-            <div className="flex gap-4 border-b border-slate-200 pb-4">
+          <div className="surface-panel">
+            <div className="flex flex-wrap gap-4 border-b border-surface-line pb-4">
               {(["about", "notes", "discussion"] as const).map((value) => (
                 <button
                   key={value}
-                  className={tab === value ? "font-semibold text-brand" : "text-slate-600"}
+                  className={`rounded-full px-4 py-2 text-sm font-semibold ${
+                    tab === value ? "bg-brand text-white" : "text-slate-600 hover:bg-surface-muted"
+                  }`}
                   onClick={() => setTab(value)}
                 >
                   {value[0].toUpperCase() + value.slice(1)}
