@@ -32,7 +32,7 @@ export default async function StudentDashboardPage() {
 
       <section className="card p-6">
         <h2 className="text-xl font-semibold">My Courses</h2>
-        <motionStudentCourses enrollments={data.enrollments} />
+        <StudentCourses enrollments={data.enrollments} />
       </section>
 
       <div className="grid gap-6 lg:grid-cols-2">
