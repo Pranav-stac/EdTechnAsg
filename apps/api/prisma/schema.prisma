@@ -55,6 +55,7 @@ model User {
   quizAttempts    QuizAttempt[]
   payments        Payment[]
   walletTxns      WalletTransaction[]
+  discussions     LessonDiscussion[]
 }
 
 model OtpChallenge {
@@ -141,6 +142,7 @@ model Lesson {
   moduleId    String
   module      CourseModule @relation(fields: [moduleId], references: [id], onDelete: Cascade)
   progress    LessonProgress[]
+  discussions LessonDiscussion[]
 }
 
 model Quiz {
@@ -223,14 +225,28 @@ model AttendanceRecord {
 }
 
 model Assignment {
+  id             String    @id @default(cuid())
+  title          String
+  dueDate        DateTime
+  status         String    @default("pending")
+  submissionNote String?
+  submittedAt    DateTime?
+  userId         String
+  courseId       String
+  user           User      @relation(fields: [userId], references: [id])
+  course         Course    @relation(fields: [courseId], references: [id])
+}
+
+model LessonDiscussion {
   id        String   @id @default(cuid())
-  title     String
-  dueDate   DateTime
-  status    String   @default("pending")
+  lessonId  String
   userId    String
-  courseId  String
-  user      User     @relation(fields: [userId], references: [id])
-  course    Course   @relation(fields: [courseId], references: [id])
+  body      String
+  createdAt DateTime @default(now())
+  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([lessonId])
 }
 
 model Payment {

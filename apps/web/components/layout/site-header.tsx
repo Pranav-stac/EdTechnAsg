@@ -58,6 +58,43 @@ export function SiteHeader() {
             />
           </div>
         </div>
+        {mobileOpen ? (
+          <div className="border-b border-slate-100 bg-white lg:hidden">
+            <div className="container-page space-y-4 py-4">
+              <form onSubmit={onSearch}>
+                <input
+                  value={search}
+                  onChange={(event) => setSearch(event.target.value)}
+                  placeholder="Search for courses, exams, colleges..."
+                  className="input"
+                />
+              </form>
+              <div className="flex flex-wrap gap-3 text-sm">
+                {NAV_LINKS.map((link) => (
+                  <Link key={link} href={`/courses?search=${encodeURIComponent(link)}`} className="text-slate-700">
+                    {link}
+                  </Link>
+                ))}
+              </div>
+              <div className="grid gap-4 sm:grid-cols-2">
+                {Object.entries(MEGA_MENU).map(([key, items]) => (
+                  <div key={key}>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{key.replace(/([A-Z])/g, " $1")}</p>
+                    <ul className="mt-2 space-y-1 text-sm">
+                      {items.map((item) => (
+                        <li key={item}>
+                          <Link href={`/courses?search=${encodeURIComponent(item)}`} className="text-slate-700">
+                            {item}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        ) : null}
         <div className="relative hidden border-t border-slate-100 lg:block">
           <div className="container-page flex items-center gap-6 py-3 text-sm font-medium text-slate-700">
             <button

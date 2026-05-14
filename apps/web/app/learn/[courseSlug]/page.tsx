@@ -4,12 +4,22 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
 
+type DiscussionItem = {
+  id: string;
+  body: string;
+  createdAt: string;
+  user: { name: string };
+};
+
 export default function LearnPage({ params }: { params: Promise<{ courseSlug: string; lessonId?: string }> }) {
   const [courseSlug, setCourseSlug] = useState("");
   const [lessonId, setLessonId] = useState("");
   const [course, setCourse] = useState<any>(null);
   const [activeLesson, setActiveLesson] = useState<any>(null);
   const [tab, setTab] = useState<"about" | "notes" | "discussion">("about");
+  const [discussion, setDiscussion] = useState<DiscussionItem[]>([]);
+  const [comment, setComment] = useState("");
+  const [discussionMessage, setDiscussionMessage] = useState("");
 
   useEffect(() => {
     params.then((value) => {
@@ -34,6 +44,28 @@ export default function LearnPage({ params }: { params: Promise<{ courseSlug: st
     });
   }, [courseSlug, lessonId]);
 
+  useEffect(() => {
+    if (!activeLesson || tab !== "discussion") return;
+    api<{ items: DiscussionItem[] }>(`/api/v1/student/lessons/${activeLesson.id}/discussion`)
+      .then((data) => setDiscussion(data.items))
+      .catch(() => setDiscussion([]));
+  }, [activeLesson, tab]);
+
+  const postDiscussion = async () => {
+    if (!activeLesson || comment.trim().length < 2) return;
+    try {
+      const data = await api<{ item: DiscussionItem }>(`/api/v1/student/lessons/${activeLesson.id}/discussion`, {
+        method: "POST",
+        body: JSON.stringify({ body: comment.trim() }),
+      });
+      setDiscussion((current) => [...current, data.item]);
+      setComment("");
+      setDiscussionMessage("Comment posted.");
+    } catch (error) {
+      setDiscussionMessage(error instanceof Error ? error.message : "Unable to post comment");
+    }
+  };
+
   if (!course || !activeLesson) {
     return <div className="container-page py-20">Loading lesson...</div>;
   }
@@ -42,14 +74,7 @@ export default function LearnPage({ params }: { params: Promise<{ courseSlug: st
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <div className="border-b border-slate-200 bg-white">
-        <div className="container-page py-4">
-          <Link href="/student" className="text-sm text-brand">
-            Back to dashboard
-          </Link>
-          <h1 className="mt-2 text-2xl font-bold">{course.title}</h1>
-        </div>
-      </div>
+      <LearnPageHeader courseTitle={course.title} />
       <div className="container-page grid gap-8 py-8 lg:grid-cols-[280px_1fr]">
         <aside className="card p-4">
           <h2 className="font-semibold">Course Content</h2>
@@ -92,7 +117,23 @@ export default function LearnPage({ params }: { params: Promise<{ courseSlug: st
             <div className="mt-4 text-sm text-slate-700">
               {tab === "about" && <p>{course.description}</p>}
               {tab === "notes" && <p>{activeLesson.notes}</p>}
-              {tab === "discussion" && <p>Discussion threads will appear here for this lesson.</p>}
+              {tab === "discussion" && (
+                <div className="space-y-4">
+                  {discussion.map((item) => (
+                    <DiscussionItem key={item.id} item={item} />
+                  ))}
+                  <textarea
+                    className="input min-h-24"
+                    value={comment}
+                    onChange={(event) => setComment(event.target.value)}
+                    placeholder="Ask a question or share a note"
+                  />
+                  <button className="btn-primary" onClick={postDiscussion}>
+                    Post Comment
+                  </button>
+                  {discussionMessage ? <p className="text-sm text-slate-500">{discussionMessage}</p> : null}
+                </div>
+              )}
             </div>
             {activeLesson.resourceUrl ? (
               <a href={activeLesson.resourceUrl} className="mt-4 inline-flex text-sm font-semibold text-brand">
@@ -107,6 +148,28 @@ export default function LearnPage({ params }: { params: Promise<{ courseSlug: st
           ) : null}
         </section>
       </div>
+    </div>
+  );
+}
+
+function LearnPageHeader({ courseTitle }: { courseTitle: string }) {
+  return (
+    <div className="border-b border-slate-200 bg-white">
+      <div className="container-page py-4">
+        <Link href="/student" className="text-sm text-brand">
+          Back to dashboard
+        </Link>
+        <h1 className="mt-2 text-2xl font-bold">{courseTitle}</h1>
+      </div>
+    </div>
+  );
+}
+
+function DiscussionItem({ item }: { item: DiscussionItem }) {
+  return (
+    <div className="rounded-xl bg-slate-50 p-3">
+      <p className="font-medium">{item.user.name}</p>
+      <p className="mt-1">{item.body}</p>
     </div>
   );
 }

@@ -54,6 +54,20 @@ export const quizSubmitSchema = z.object({
   answers: z.record(z.string(), z.string()),
 });
 
+export const assignmentSubmitSchema = z.object({
+  submissionNote: z.string().min(5),
+});
+
+export const profileUpdateSchema = z.object({
+  name: z.string().min(2),
+  email: z.string().email().optional().nullable(),
+  phone: z.string().min(10).optional().nullable(),
+});
+
+export const discussionPostSchema = z.object({
+  body: z.string().min(2).max(1000),
+});
+
 export const createOrderSchema = z.object({
   courseSlug: z.string().optional(),
   amount: z.number().positive().optional(),

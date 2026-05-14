@@ -24,6 +24,7 @@ const specializations = ["Finance", "Marketing", "HR", "Operations", "Business A
 
 async function main() {
   await prisma.quizAttempt.deleteMany();
+  await prisma.lessonDiscussion.deleteMany();
   await prisma.quizQuestion.deleteMany();
   await prisma.quiz.deleteMany();
   await prisma.lessonProgress.deleteMany();
@@ -188,6 +189,24 @@ async function main() {
       status: "pending",
       userId: student.id,
       courseId: featured.id,
+    },
+  });
+
+  await prisma.assignment.create({
+    data: {
+      title: "Control Flow Worksheet",
+      dueDate: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000),
+      status: "pending",
+      userId: student.id,
+      courseId: featured.id,
+    },
+  });
+
+  await prisma.lessonDiscussion.create({
+    data: {
+      lessonId: lessons[0].id,
+      userId: student.id,
+      body: "Can we get more examples for variable naming conventions?",
     },
   });
 

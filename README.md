@@ -74,6 +74,7 @@ The frontend consumes versioned REST endpoints from the Express API. Public cata
 - Review attendance, assignments, wallet, and dashboard stats
 - Manage leads, students, courses, and payments in admin
 - Complete Razorpay test checkout or mock checkout without keys
+- Submit assignments, update profile settings, post lesson discussions, and unlock certificates at 100% course progress
 
 ## Deployment notes
 

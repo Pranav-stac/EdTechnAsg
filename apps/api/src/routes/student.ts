@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { progressSchema, quizSubmitSchema } from "@manzilchaser/shared";
+import { assignmentSubmitSchema, discussionPostSchema, progressSchema, quizSubmitSchema } from "@manzilchaser/shared";
 import { prisma } from "../lib/prisma";
 import { AppError, asyncHandler } from "../lib/errors";
 import { AuthedRequest, requireAuth, requireRole } from "../middleware/auth";
@@ -146,6 +146,78 @@ router.get(
       orderBy: { dueDate: "asc" },
     });
     res.json({ items });
+  })
+);
+
+router.post(
+  "/assignments/:id/submit",
+  asyncHandler(async (req: AuthedRequest, res) => {
+    const { submissionNote } = assignmentSubmitSchema.parse(req.body);
+    const assignment = await prisma.assignment.findFirst({
+      where: { id: req.params.id, userId: req.user!.id },
+    });
+    if (!assignment) throw new AppError(404, "NOT_FOUND", "Assignment not found");
+
+    const updated = await prisma.assignment.update({
+      where: { id: assignment.id },
+      data: {
+        submissionNote,
+        submittedAt: new Date(),
+        status: "submitted",
+      },
+      include: { course: true },
+    });
+
+    res.json({ assignment: updated });
+  })
+);
+
+router.get(
+  "/certificates",
+  asyncHandler(async (req: AuthedRequest, res) => {
+    const enrollments = await prisma.enrollment.findMany({
+      where: { userId: req.user!.id, progress: { gte: 100 } },
+      include: { course: { include: { university: true } } },
+      orderBy: { enrolledAt: "desc" },
+    });
+
+    const items = enrollments.map((enrollment) => ({
+      id: enrollment.id,
+      courseTitle: enrollment.course.title,
+      university: enrollment.course.university.name,
+      issuedAt: enrollment.enrolledAt,
+      certificateCode: `MC-${enrollment.id.slice(0, 8).toUpperCase()}`,
+    }));
+
+    res.json({ items });
+  })
+);
+
+router.get(
+  "/lessons/:lessonId/discussion",
+  asyncHandler(async (req: AuthedRequest, res) => {
+    const items = await prisma.lessonDiscussion.findMany({
+      where: { lessonId: req.params.lessonId },
+      include: { user: { select: { id: true, name: true } } },
+      orderBy: { createdAt: "asc" },
+    });
+    res.json({ items });
+  })
+);
+
+router.post(
+  "/lessons/:lessonId/discussion",
+  asyncHandler(async (req: AuthedRequest, res) => {
+    const { body } = discussionPostSchema.parse(req.body);
+    const item = await prisma.lessonDiscussion.create({
+      data: {
+        lessonId: req.params.lessonId,
+        userId: req.user!.id,
+        body,
+      },
+      include: { user: { select: { id: true, name: true } } },
+    });
+    res.status(201).json({ item });
   })
 );
 

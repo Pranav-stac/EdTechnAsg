@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { loginSchema, otpRequestSchema, otpVerifySchema } from "@manzilchaser/shared";
+import { loginSchema, otpRequestSchema, otpVerifySchema, profileUpdateSchema } from "@manzilchaser/shared";
 import { prisma } from "../lib/prisma";
 import { AppError, asyncHandler } from "../lib/errors";
 import { comparePassword, generateOtp, hashOtp, hashPassword } from "../lib/crypto";
@@ -116,6 +116,33 @@ router.get(
   asyncHandler(async (req: AuthedRequest, res) => {
     const user = await prisma.user.findUnique({ where: { id: req.user!.id } });
     if (!user) throw new AppError(404, "NOT_FOUND", "User not found");
+    res.json({
+      user: {
+        id: user.id,
+        name: user.name,
+        role: user.role,
+        email: user.email,
+        phone: user.phone,
+        walletBalance: user.walletBalance,
+      },
+    });
+  })
+);
+
+router.patch(
+  "/me",
+  requireAuth,
+  asyncHandler(async (req: AuthedRequest, res) => {
+    const data = profileUpdateSchema.parse(req.body);
+    const user = await prisma.user.update({
+      where: { id: req.user!.id },
+      data: {
+        name: data.name,
+        email: data.email ?? undefined,
+        phone: data.phone ?? undefined,
+      },
+    });
+
     res.json({
       user: {
         id: user.id,
