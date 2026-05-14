@@ -1,9 +1,20 @@
-import { api } from "@/lib/api";
+"use client";
 
-export default async function StudentCertificatesPage() {
-  const data = await api<{ items: Array<{ id: string; courseTitle: string; university: string; issuedAt: string; certificateCode: string }> }>(
-    "/api/v1/student/certificates"
-  );
+import { useAsyncApi } from "@/lib/use-async-api";
+
+type Certificate = {
+  id: string;
+  courseTitle: string;
+  university: string;
+  issuedAt: string;
+  certificateCode: string;
+};
+
+export default function StudentCertificatesPage() {
+  const { data, loading, error } = useAsyncApi<{ items: Certificate[] }>("/api/v1/student/certificates");
+
+  if (loading) return <p className="text-sm text-slate-600">Loading certificates...</p>;
+  if (error || !data) return <p className="text-sm text-rose-600">{error || "Unable to load certificates."}</p>;
 
   return (
     <div className="card p-6">

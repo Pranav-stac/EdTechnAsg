@@ -1,9 +1,15 @@
+"use client";
+
 import { CheckoutButton } from "@/components/payments/checkout-button";
-import { api } from "@/lib/api";
+import { useAsyncApi } from "@/lib/use-async-api";
 import { formatCurrency } from "@/lib/utils";
 
-export default async function StudentWalletPage() {
-  const data = await api<{ user: { walletBalance: number } }>("/api/v1/auth/me");
+export default function StudentWalletPage() {
+  const { data, loading, error } = useAsyncApi<{ user: { walletBalance: number } }>("/api/v1/auth/me");
+
+  if (loading) return <p className="text-sm text-slate-600">Loading wallet...</p>;
+  if (error || !data) return <p className="text-sm text-rose-600">{error || "Unable to load wallet."}</p>;
+
   return (
     <div className="card p-6">
       <h1 className="text-2xl font-bold">My Wallet</h1>

@@ -1,15 +1,29 @@
+"use client";
+
 import Link from "next/link";
 import { BookOpen, CalendarDays, ClipboardList, Trophy } from "lucide-react";
-import { api } from "@/lib/api";
+import { useAuth } from "@/components/providers/auth-provider";
+import { useAsyncApi } from "@/lib/use-async-api";
 
-export default async function StudentDashboardPage() {
-  const data = await api<{
-    stats: { coursesEnrolled: number; liveClasses: number; assignments: number; testScore: number };
-    enrollments: any[];
-    liveClasses: any[];
-    assignments: any[];
-    announcements: any[];
-  }>("/api/v1/student/dashboard");
+type DashboardData = {
+  stats: { coursesEnrolled: number; liveClasses: number; assignments: number; testScore: number };
+  enrollments: any[];
+  liveClasses: any[];
+  assignments: any[];
+  announcements: any[];
+};
+
+export default function StudentDashboardPage() {
+  const { user } = useAuth();
+  const { data, loading, error } = useAsyncApi<DashboardData>("/api/v1/student/dashboard");
+
+  if (loading) {
+    return <p className="text-sm text-slate-600">Loading dashboard...</p>;
+  }
+
+  if (error || !data) {
+    return <p className="text-sm text-rose-600">{error || "Unable to load dashboard."}</p>;
+  }
 
   const statItems = [
     { label: "Courses Enrolled", value: data.stats.coursesEnrolled, icon: BookOpen },
@@ -22,16 +36,14 @@ export default async function StudentDashboardPage() {
     <div className="space-y-8">
       <div className="rounded-3xl bg-hero-grid p-8 text-white">
         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-100">Student Dashboard</p>
-        <h1 className="mt-3 text-3xl font-bold">Welcome back, Ankit Sharma</h1>
+        <h1 className="mt-3 text-3xl font-bold">Welcome back, {user?.name || "Learner"}</h1>
         <p className="mt-2 max-w-2xl text-blue-100">Track your learning, classes, and progress in one place.</p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {statItems.map((item) => {
           const Icon = item.icon;
-          return (
-            <StudentStatCard key={item.label} item={item} Icon={Icon} />
-          );
+          return <StudentStatCard key={item.label} item={item} Icon={Icon} />;
         })}
       </div>
 

@@ -1,13 +1,18 @@
-import { api } from "@/lib/api";
+"use client";
+
+import { useAsyncApi } from "@/lib/use-async-api";
 import { formatCurrency } from "@/lib/utils";
 
-export default async function AdminOverviewPage() {
-  const data = await api<{
+export default function AdminOverviewPage() {
+  const { data, loading, error } = useAsyncApi<{
     leads: number;
     enrollments: number;
     revenue: number;
     activeLearners: number;
   }>("/api/v1/admin/analytics");
+
+  if (loading) return <p className="text-sm text-slate-600">Loading analytics...</p>;
+  if (error || !data) return <p className="text-sm text-rose-600">{error || "Unable to load analytics."}</p>;
 
   return (
     <div className="space-y-6">

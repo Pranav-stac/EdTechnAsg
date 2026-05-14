@@ -1,7 +1,13 @@
-import { api } from "@/lib/api";
+"use client";
 
-export default async function StudentAttendancePage() {
-  const data = await api<{ items: any[] }>("/api/v1/student/attendance");
+import { useAsyncApi } from "@/lib/use-async-api";
+
+export default function StudentAttendancePage() {
+  const { data, loading, error } = useAsyncApi<{ items: any[] }>("/api/v1/student/attendance");
+
+  if (loading) return <p className="text-sm text-slate-600">Loading attendance...</p>;
+  if (error || !data) return <p className="text-sm text-rose-600">{error || "Unable to load attendance."}</p>;
+
   return (
     <div className="card p-6">
       <h1 className="text-2xl font-bold">Attendance</h1>

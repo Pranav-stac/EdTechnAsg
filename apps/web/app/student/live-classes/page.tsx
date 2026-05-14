@@ -1,7 +1,13 @@
-import { api } from "@/lib/api";
+"use client";
 
-export default async function StudentLiveClassesPage() {
-  const data = await api<{ liveClasses: any[] }>("/api/v1/student/dashboard");
+import { useAsyncApi } from "@/lib/use-async-api";
+
+export default function StudentLiveClassesPage() {
+  const { data, loading, error } = useAsyncApi<{ liveClasses: any[] }>("/api/v1/student/dashboard");
+
+  if (loading) return <p className="text-sm text-slate-600">Loading live classes...</p>;
+  if (error || !data) return <p className="text-sm text-rose-600">{error || "Unable to load live classes."}</p>;
+
   return (
     <div className="card p-6">
       <h1 className="text-2xl font-bold">Live Classes</h1>
