@@ -1,0 +1,290 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  student
+  admin
+}
+
+enum LeadStatus {
+  new
+  contacted
+  qualified
+  closed
+}
+
+enum PaymentStatus {
+  created
+  paid
+  failed
+}
+
+enum LeadSource {
+  enroll
+  talk_to_expert
+  homepage
+}
+
+enum PaymentPurpose {
+  enrollment
+  wallet_topup
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String?  @unique
+  phone        String?  @unique
+  passwordHash String?
+  role         UserRole @default(student)
+  walletBalance Int     @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  otpChallenges   OtpChallenge[]
+  enrollments     Enrollment[]
+  lessonProgress  LessonProgress[]
+  attendance      AttendanceRecord[]
+  assignments     Assignment[]
+  quizAttempts    QuizAttempt[]
+  payments        Payment[]
+  walletTxns      WalletTransaction[]
+}
+
+model OtpChallenge {
+  id         String   @id @default(cuid())
+  identifier String
+  otpHash    String
+  expiresAt  DateTime
+  attempts   Int      @default(0)
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id])
+  createdAt  DateTime @default(now())
+
+  @@index([identifier])
+}
+
+model Category {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String?
+  icon        String?
+  accent      String?
+  courses     Course[]
+}
+
+model University {
+  id       String   @id @default(cuid())
+  name     String
+  slug     String   @unique
+  logoUrl  String?
+  rating   Float    @default(4.5)
+  courses  Course[]
+}
+
+model Course {
+  id             String     @id @default(cuid())
+  title          String
+  slug           String     @unique
+  description    String
+  fee            Int
+  duration       String
+  mode           String
+  specialization String
+  rating         Float      @default(4.5)
+  accreditation  String     @default("UGC Approved")
+  tags           String[]
+  isPublished    Boolean    @default(true)
+  categoryId     String
+  universityId   String
+  category       Category   @relation(fields: [categoryId], references: [id])
+  university     University @relation(fields: [universityId], references: [id])
+  modules        CourseModule[]
+  enrollments    Enrollment[]
+  leads          Lead[]
+  payments       Payment[]
+  liveClasses    LiveClass[]
+  assignments    Assignment[]
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  @@index([specialization])
+  @@index([fee])
+  @@index([isPublished])
+}
+
+model CourseModule {
+  id        String   @id @default(cuid())
+  title     String
+  order     Int
+  courseId  String
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lessons   Lesson[]
+  quizzes   Quiz[]
+}
+
+model Lesson {
+  id          String   @id @default(cuid())
+  title       String
+  order       Int
+  videoUrl    String
+  durationSec Int      @default(600)
+  notes       String?
+  resourceUrl String?
+  moduleId    String
+  module      CourseModule @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  progress    LessonProgress[]
+}
+
+model Quiz {
+  id        String   @id @default(cuid())
+  title     String
+  moduleId  String
+  module    CourseModule @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  questions QuizQuestion[]
+  attempts  QuizAttempt[]
+}
+
+model QuizQuestion {
+  id        String @id @default(cuid())
+  prompt    String
+  options   String[]
+  answerKey String
+  order     Int
+  quizId    String
+  quiz      Quiz   @relation(fields: [quizId], references: [id], onDelete: Cascade)
+}
+
+model QuizAttempt {
+  id        String   @id @default(cuid())
+  userId    String
+  quizId    String
+  score     Int
+  total     Int
+  answers   Json
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  quiz      Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+}
+
+model Lead {
+  id         String     @id @default(cuid())
+  name       String
+  email      String
+  phone      String
+  message    String?
+  source     LeadSource
+  status     LeadStatus @default(new)
+  courseId   String?
+  course     Course?    @relation(fields: [courseId], references: [id])
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+}
+
+model Enrollment {
+  id         String   @id @default(cuid())
+  userId     String
+  courseId   String
+  progress   Int      @default(0)
+  enrolledAt DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id])
+  course     Course   @relation(fields: [courseId], references: [id])
+
+  @@unique([userId, courseId])
+}
+
+model LessonProgress {
+  id             String   @id @default(cuid())
+  userId         String
+  lessonId       String
+  completed      Boolean  @default(false)
+  watchedSeconds Int      @default(0)
+  updatedAt      DateTime @updatedAt
+  user           User     @relation(fields: [userId], references: [id])
+  lesson         Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonId])
+}
+
+model AttendanceRecord {
+  id        String   @id @default(cuid())
+  userId    String
+  date      DateTime
+  status    String
+  courseId  String?
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Assignment {
+  id        String   @id @default(cuid())
+  title     String
+  dueDate   DateTime
+  status    String   @default("pending")
+  userId    String
+  courseId  String
+  user      User     @relation(fields: [userId], references: [id])
+  course    Course   @relation(fields: [courseId], references: [id])
+}
+
+model Payment {
+  id              String         @id @default(cuid())
+  userId          String
+  courseId        String?
+  amount          Int
+  currency        String         @default("INR")
+  status          PaymentStatus  @default(created)
+  purpose         PaymentPurpose @default(enrollment)
+  razorpayOrderId String?        @unique
+  razorpayPaymentId String?
+  razorpaySignature String?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  user            User           @relation(fields: [userId], references: [id])
+  course          Course?        @relation(fields: [courseId], references: [id])
+}
+
+model WalletTransaction {
+  id        String   @id @default(cuid())
+  userId    String
+  amount    Int
+  type      String
+  note      String?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Announcement {
+  id        String   @id @default(cuid())
+  title     String
+  body      String
+  createdAt DateTime @default(now())
+}
+
+model LiveClass {
+  id        String   @id @default(cuid())
+  title     String
+  startsAt  DateTime
+  courseId  String
+  course    Course   @relation(fields: [courseId], references: [id])
+}
+
+model Partner {
+  id    String @id @default(cuid())
+  name  String
+  logoUrl String?
+}
+
+model Testimonial {
+  id      String @id @default(cuid())
+  name    String
+  role    String
+  quote   String
+  imageUrl String?
+}

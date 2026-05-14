@@ -1,0 +1,22 @@
+{
+  "name": "manzilchaser-edtech",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev -w @manzilchaser/api\" \"npm run dev -w @manzilchaser/web\"",
+    "dev:api": "npm run dev -w @manzilchaser/api",
+    "dev:web": "npm run dev -w @manzilchaser/web",
+    "build": "npm run build -w @manzilchaser/shared && npm run build -w @manzilchaser/api && npm run build -w @manzilchaser/web",
+    "db:up": "docker compose up -d",
+    "db:down": "docker compose down",
+    "db:migrate": "npm run db:migrate -w @manzilchaser/api",
+    "db:seed": "npm run db:seed -w @manzilchaser/api",
+    "db:reset": "npm run db:reset -w @manzilchaser/api"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
