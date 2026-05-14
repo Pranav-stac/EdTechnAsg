@@ -111,7 +111,7 @@ router.post(
 
     if (lesson) {
       const course = lesson.module.course;
-      const totalLessons = course.modules.flatMap((m) => m.lessons).length;
+      const totalLessons = course.modules.flatMap((module) => module.lessons).length;
       const completed = await prisma.lessonProgress.count({
         where: { userId: req.user!.id, completed: true, lesson: { module: { courseId: course.id } } },
       });

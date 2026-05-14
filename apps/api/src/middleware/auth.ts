@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { UserRole } from "@prisma/client";
+import { UserRole } from "@manzilchaser/shared";
 import { AppError } from "../lib/errors";
 import { verifyToken } from "../lib/jwt";
 

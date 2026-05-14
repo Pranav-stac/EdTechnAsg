@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { UserRole } from "@prisma/client";
+import { UserRole } from "@manzilchaser/shared";
 
 const JWT_SECRET = process.env.JWT_SECRET || "dev-secret";
 

@@ -50,7 +50,7 @@ export function SiteHeader() {
                 />
               </div>
             </form>
-            <motionMainNavActions
+            <MainNavActions
               mobileOpen={mobileOpen}
               setMobileOpen={setMobileOpen}
               onAuth={() => setAuthOpen(true)}
