@@ -7,7 +7,7 @@
 }
 
 body {
-  @apply bg-slate-50 text-slate-900 antialiased;
+  @apply bg-surface-muted font-sans text-slate-900 antialiased;
 }
 
 .container-page {
@@ -15,11 +15,19 @@ body {
 }
 
 .section-title {
-  @apply text-2xl font-bold text-slate-900 sm:text-3xl;
+  @apply text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl;
+}
+
+.section-subtitle {
+  @apply mt-2 max-w-2xl text-sm text-slate-600 sm:text-base;
 }
 
 .card {
-  @apply rounded-2xl border border-slate-200 bg-white shadow-card;
+  @apply rounded-2xl border border-surface-line bg-white shadow-card;
+}
+
+.card-soft {
+  @apply rounded-2xl border border-surface-line bg-white/90 shadow-sm;
 }
 
 .btn-primary {
@@ -27,13 +35,33 @@ body {
 }
 
 .btn-secondary {
-  @apply inline-flex items-center justify-center rounded-xl border border-brand px-5 py-3 text-sm font-semibold text-brand transition hover:bg-brand-light;
+  @apply inline-flex items-center justify-center rounded-xl border border-brand bg-white px-5 py-3 text-sm font-semibold text-brand transition hover:bg-brand-light;
+}
+
+.btn-accent {
+  @apply inline-flex items-center justify-center rounded-xl bg-accent-orange px-5 py-3 text-sm font-semibold text-white transition hover:bg-orange-600;
 }
 
 .input {
-  @apply w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none ring-brand focus:ring-2;
+  @apply w-full rounded-xl border border-surface-line bg-white px-4 py-3 text-sm outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20;
 }
 
 .badge {
-  @apply rounded-full bg-brand-light px-3 py-1 text-xs font-medium text-brand;
+  @apply inline-flex items-center rounded-full bg-brand-light px-3 py-1 text-xs font-semibold text-brand;
+}
+
+.pill {
+  @apply inline-flex items-center rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-semibold text-white backdrop-blur;
+}
+
+.nav-link {
+  @apply text-sm font-medium text-white/90 transition hover:text-white;
+}
+
+.stat-card {
+  @apply rounded-2xl border border-surface-line bg-white p-5 shadow-sm;
+}
+
+.surface-panel {
+  @apply rounded-3xl border border-surface-line bg-white p-6 shadow-panel;
 }
