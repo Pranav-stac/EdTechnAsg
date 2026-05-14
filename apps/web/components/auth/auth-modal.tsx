@@ -112,7 +112,7 @@ export function AuthModal({ open, onClose }: Props) {
   };
 
   return (
-    <motionAuthModalOverlay onClose={onClose}>
+    <AuthModalOverlay onClose={onClose}>
       <div className="grid overflow-hidden rounded-3xl bg-white shadow-panel lg:grid-cols-[0.95fr_1.05fr]">
         <div className="relative hidden min-h-[560px] bg-hero-grid p-10 text-white lg:flex lg:flex-col lg:justify-between">
           <div>
@@ -199,7 +199,7 @@ export function AuthModal({ open, onClose }: Props) {
           {message ? <p className="mt-4 rounded-xl bg-brand-light px-4 py-3 text-sm text-brand-navy">{message}</p> : null}
         </div>
       </div>
-    </motionAuthModalOverlay>
+    </AuthModalOverlay>
   );
 }
 
@@ -255,26 +255,12 @@ function OtpForm({
       <button className="btn-primary w-full" onClick={verifyOtp} disabled={loading}>
         Verify OTP
       </button>
-      <motionOtpFormFooter requestOtp={requestOtp} resendIn={resendIn} setMode={setMode} />
+      <OtpFormFooter requestOtp={requestOtp} resendIn={resendIn} setMode={setMode} />
     </div>
   );
 }
 
 function OtpFormFooter({
-  requestOtp,
-  resendIn,
-  setMode,
-}: {
-  requestOtp: () => void;
-  resendIn: number;
-  setMode: (mode: "login" | "otp") => void;
-}) {
-  return (
-    <motionOtpFormFooterInner requestOtp={requestOtp} resendIn={resendIn} setMode={setMode} />
-  );
-}
-
-function OtpFormFooterInner({
   requestOtp,
   resendIn,
   setMode,
@@ -294,7 +280,3 @@ function OtpFormFooterInner({
     </div>
   );
 }
-
-const motionAuthModalOverlay = AuthModalOverlay;
-const motionOtpFormFooter = OtpFormFooter;
-const motionOtpFormFooterInner = OtpFormFooterInner;
