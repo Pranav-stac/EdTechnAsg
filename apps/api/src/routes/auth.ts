@@ -8,13 +8,15 @@ import { AuthedRequest, requireAuth } from "../middleware/auth";
 
 const router = Router();
 
+const authCookieOptions = {
+  httpOnly: true,
+  sameSite: process.env.NODE_ENV === "production" ? ("none" as const) : ("lax" as const),
+  secure: process.env.NODE_ENV === "production",
+  maxAge: 7 * 24 * 60 * 60 * 1000,
+};
+
 function setAuthCookie(res: Parameters<typeof router.post>[1] extends never ? never : any, token: string) {
-  res.cookie("token", token, {
-    httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-    maxAge: 7 * 24 * 60 * 60 * 1000,
-  });
+  res.cookie("token", token, authCookieOptions);
 }
 
 router.post(
@@ -106,7 +108,7 @@ router.post(
 );
 
 router.post("/logout", (_req, res) => {
-  res.clearCookie("token");
+  res.clearCookie("token", authCookieOptions);
   res.json({ message: "Logged out" });
 });
 
